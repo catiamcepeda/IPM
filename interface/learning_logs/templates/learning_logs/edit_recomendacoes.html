@@ -1,0 +1,114 @@
+{% extends "learning_logs/base.html" %}
+{% load staticfiles %}
+
+{% block header %}
+<h1>Assistência Personalizada</h1>
+{% endblock header %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'learning_logs/css/index.css' %}">
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css">
+{% endblock%}
+{% block add_head_scripts %}
+<script>
+
+
+	function getCookie(name) {
+          var cookieValue = null;
+          if (document.cookie && document.cookie != '') {
+              var cookies = document.cookie.split(';');
+              for (var i = 0; i < cookies.length; i++) {
+                  var cookie = jQuery.trim(cookies[i]);
+                  // Does this cookie string begin with the name we want?
+                  if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+      }
+	  	
+	
+
+	$(document).ready(function(){
+		
+    	var csrftoken = getCookie('csrftoken');
+        //Quem precisa de CSRF Token? 
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+          $('#guardar').click(function() {
+                setTimeout(
+                    function() 
+                    {
+                        $('#myModal').modal('hide');
+                    }, 2000);
+                     
+                });
+
+      });
+
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="col-md-2">
+</div>
+<div class="col-md-8" style="padding-top: 20px">
+            <table  class="table table-bordered table-condensed" >
+				<thead>
+					<tr>
+						<th style="width: 300px">
+							Os seus sintomas
+						</th>
+						<th style="width: 600px">
+							Recomendações
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="padding-left:30px">
+							<h4>Falta de ar</h4>
+                            <h4>Tonturas</h4>
+                            <h4>Palpitações</h4>
+                            <h4>Tensão arterial diastólica < 60 mmHg</h4>
+						</td>
+						<td>
+							<div id="recomendacoes">
+                                <ul>
+                                    <li><h4 style="text-align:left;">Dirija-se ao hospital mais próximo urgentemente!</h4></li>
+                                   </ul>
+							</div>
+						</td>
+					</tr>				
+				</tbody>
+			</table>
+            <div style="padding-left:270px">
+                <a id="guardar" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#myModal">Guardar registo</a> &nbsp &nbsp
+				<a href="{% url 'learning_logs:us_loc' %}" class="btn btn-lg btn-primary">Enviar para hospital</a> &nbsp &nbsp
+                <a href="{% url 'learning_logs:menu' %}" class="btn btn-lg btn-primary">Sair</a> 
+			</div>
+			<div>
+				
+			</div>
+
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+          <h5> Registo guardado com sucesso! </h5>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="col-md-2">
+</div>
+
+{% endblock content %}

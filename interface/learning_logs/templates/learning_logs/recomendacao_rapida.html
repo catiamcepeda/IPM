@@ -1,0 +1,147 @@
+{% extends "learning_logs/base.html" %}
+{% load staticfiles %}
+
+{% block header %}
+<h1>Assistência Rápida</h1>
+{% endblock header %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'learning_logs/css/index.css' %}">
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css">
+{% endblock%}
+{% block add_head_scripts %}
+<script>
+
+
+	function getCookie(name) {
+          var cookieValue = null;
+          if (document.cookie && document.cookie != '') {
+              var cookies = document.cookie.split(';');
+              for (var i = 0; i < cookies.length; i++) {
+                  var cookie = jQuery.trim(cookies[i]);
+                  // Does this cookie string begin with the name we want?
+                  if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+      }
+	  	
+	
+
+	$(document).ready(function(){
+		
+    	var csrftoken = getCookie('csrftoken');
+        //Quem precisa de CSRF Token? 
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+          $('#email').click(function() {
+                var x = document.getElementById("exampleInputEmail1").value;
+                var d = document.getElementById("erro");
+                $("#erro").empty();
+                var atpos = x.indexOf("@");
+                var dotpos = x.lastIndexOf(".");
+                if (atpos<1 || dotpos<atpos+2 || dotpos+2>=x.length) {
+                    var d = document.getElementById("erro");
+                    var h = document.createElement("H5");  
+                    var t = document.createTextNode("Por favor, insira correctamente o seu e-mail.");
+                    h.appendChild(t);
+                    h.style.cssText = "color:red;";
+                    d.appendChild(h);      
+                }
+                else{
+                    document.getElementById('title').remove();
+                    document.getElementById('exampleInputEmail1').remove();
+                    document.getElementById('email').remove();
+                    document.getElementById('cancel').remove();
+                    document.getElementById('footer').remove();
+                    document.getElementById('erro').remove();
+                    var d = document.getElementById('text');
+                    var h = document.createElement("H5");  
+                    var t = document.createTextNode("E-mail enviado com sucesso!");
+                    h.appendChild(t);
+                    d.appendChild(h); 
+                    setTimeout(function(){ $('#myModal').modal('hide'); }, 3000);
+                     
+                }
+                     
+            });
+
+      });
+
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="col-md-2">
+</div>
+<div class="col-md-8" style="padding-top: 20px">
+            <table  class="table table-bordered table-condensed" >
+				<thead>
+					<tr>
+						<th style="width: 300px">
+							Os seus sintomas
+						</th>
+						<th style="width: 600px">
+							Recomendações
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="padding-left:30px">
+								<h4>Azia</h4>
+                                <h4>Vómitos</h4>
+                                <h4>Dor de barriga</h4>
+                                <h4>Dor de cabeça</h4>
+						</td>
+						<td>
+							<div id="recomendacoes">
+                                <ul>
+                                    <li><h4 style="text-align:left;">Beber muita água</h4></li>
+                                    <li><h4 style="text-align:left;">Seguir alimentação dietética </h4></li>
+                                    <li><h4 style="text-align:left;">Se os sintomas agravarem ou persisterem consultar o médico </h4></li>
+                                </ul>
+							</div>
+						</td>
+					</tr>				
+				</tbody>
+			</table>
+            <div style="padding-left:470px">
+				<a id="enviar" class="btn btn-lg btn-primary" data-toggle="modal" data-target="#myModal">Enviar por e-mail</a> &nbsp &nbsp
+                <a href="{% url 'learning_logs:index' %}" class="btn btn-lg btn-primary">Sair</a> 
+			</div>
+			<div>
+				
+			</div>
+
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color:#337ab7" id="title">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel" style="color:white">Introduza o seu e-mail</h4>
+      </div>
+      <div class="modal-body">
+          <div id="erro"> </div>
+        <div id="text"><input type="email" class="form-control" id="exampleInputEmail1" /></div>
+      </div>
+      <div id="footer" class="modal-footer">
+        <button id="cancel" type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+        <button id="email" type="button" class="btn btn-primary">Enviar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="col-md-2">
+</div>
+
+{% endblock content %}

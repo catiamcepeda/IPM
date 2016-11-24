@@ -1,0 +1,41 @@
+.jumbotron
+{
+    padding-top: 1px;
+    height: 145px;
+}
+
+div.alert_cont
+{
+     padding-left: 180px;
+     padding-top: 10px;
+}
+
+img.img_alert
+{
+    height: 70px; 
+    width: 70px;
+}
+
+h4.h_alert
+{
+    padding-top: 10px;
+    text-align: center;
+}
+
+div.register
+{
+    align-content: right;
+}
+
+.img_doctor
+{
+    height: 250px; 
+}
+
+ul.selectable li {
+    background: #FFF;
+    border-bottom: 1px solid #DDD;
+    cursor: pointer;
+    float: left;
+    width: 100%;
+}

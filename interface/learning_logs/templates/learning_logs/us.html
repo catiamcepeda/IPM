@@ -1,0 +1,249 @@
+{% extends "learning_logs/base.html" %}
+{% block header %}
+<h1>Pesquisa de unidade de saúde</h1>
+{% endblock header %}
+{% block add_head_scripts %}
+  <script>
+  var currentValue = 0;
+    function unidade_us(myRadio) {
+      currentValue = myRadio.value;
+    }
+
+    function getCookie(name) {
+          var cookieValue = null;
+          if (document.cookie && document.cookie != '') {
+              var cookies = document.cookie.split(';');
+              for (var i = 0; i < cookies.length; i++) {
+                  var cookie = jQuery.trim(cookies[i]);
+                  // Does this cookie string begin with the name we want?
+                  if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+      }
+      $(document).ready(function(){
+        var csrftoken = getCookie('csrftoken');
+        //Quem precisa de CSRF Token? 
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        //Setup AJAX	
+          // $.ajaxSetup({
+          //     crossDomain: false, // obviates need for sameOrigin test
+          //     beforeSend: function(xhr, settings) {
+          //         if (!csrfSafeMethod(settings.type)) {
+          //             xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          //         }
+          //     }
+          // });
+        
+
+        $('select#selectdistritos').change(function () { 
+           $('select#select_concelhos').empty();
+              $('select#select_concelhos').append($("<option>"+ '-Seleccione concelho-' +"</option>").text('-Seleccione concelho-'));
+            var optionSelected = $(this).find("option:selected");
+            var valueSelected  = optionSelected.val();
+            var distritos_name   = optionSelected.text();
+            _data = {'dst' : distritos_name };
+            $.ajax({
+              crossDomain: false, // obviates need for sameOrigin test
+              beforeSend: function(xhr, settings) {
+                  if (!csrfSafeMethod(settings.type)) {
+                      //xhr.setRequestHeader('X-CSRF-Token', getCSRFTokenValue());
+                      xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                  }
+              },
+              type: 'POST',
+              url: '/get_concelho/',
+              data: _data,
+              success: function(resp)
+              {
+                //alert("<option>"+ resp['17'] +"</option>");
+                $.each( resp, function( key, value ) {
+                  $("#select_concelhos").append($("<option>"+ value +"</option>").text(value));
+                });
+                  
+              }
+          });
+          });
+
+           $('select#select_concelhos').change(function () {
+             $('select#select_freguesias').empty();
+              $('select#select_freguesias').append($("<option>"+ '-Seleccione freguesia-' +"</option>").text('-Seleccione freguesia-'));
+            var optionSelected = $(this).find("option:selected");
+            var valueSelected  = optionSelected.val();
+            var concelhos_name   = optionSelected.text();
+            _data = {'ccl' : concelhos_name };
+            $.ajax({
+              crossDomain: false, // obviates need for sameOrigin test
+              beforeSend: function(xhr, settings) {
+                  if (!csrfSafeMethod(settings.type)) {
+                      //xhr.setRequestHeader('X-CSRF-Token', getCSRFTokenValue());
+                      xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                  }
+              },
+              type: 'POST',
+              url: '/get_freguesia/',
+              data: _data,
+              success: function(resp)
+              {
+                //alert("<option>"+ resp['17'] +"</option>");
+                $.each( resp, function( key, value ) {
+                  $("#select_freguesias").append($("<option>"+ value +"</option>").text(value));
+                });
+                  
+              }
+          });
+          });
+           
+          $('button#pesquisar_un').click(function () {
+            $("#list_unidades").empty();  
+            var d = document.getElementById("erro");
+            $("#erro").empty();
+            if ((currentValue == 0) || ($('select#select_freguesias').val() == '-Seleccione freguesia-')){
+                  var d = document.getElementById("erro");
+                  var h = document.createElement("H4");  
+                  var t = document.createTextNode("Por favor, insira todos os critérios de pesquisa.");
+                  h.appendChild(t);
+                  h.style.cssText = "color:red;";
+                  d.appendChild(h);      
+            }
+            else{
+              var optionSelected = $('select#select_freguesias').find("option:selected");
+              var valueSelected  = optionSelected.val();
+              var freguesias_name = optionSelected.text();
+              var tipo_name = currentValue;
+              _data = {'fgs' : freguesias_name, 'tp': tipo_name };
+              $.ajax({
+                crossDomain: false, // obviates need for sameOrigin test
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type)) {
+                        //xhr.setRequestHeader('X-CSRF-Token', getCSRFTokenValue());
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                },
+                type: 'POST',
+                url: '/get_loc/',
+                data: _data,
+                success: function(resp)
+                {
+                    var ul = document.getElementById("list_unidades");
+                    var h = document.createElement("H3");  
+                    var t = document.createTextNode("Resultado da pesquisa");
+                    h.appendChild(t);
+                    var line1 = document.createElement("hr");
+                    ul.appendChild(h);
+                    ul.appendChild(line1);
+                    if ($.isEmptyObject(resp)){
+                        var li = document.createElement("li");
+                        var line2 = document.createElement("hr");
+                        li.style.cssText = "font-size:120%; list-style-type: none";
+                        li.appendChild(document.createTextNode("Não foram encontrados resultados."));
+                        ul.appendChild(li);
+                        ul.appendChild(line2);
+                    }
+                    else
+                    {
+                    //$.isEmptyObject(resp)){alert("empty");}
+                      $.each( resp, function( key, value ) {
+                          var li = document.createElement("li");
+                          var line2 = document.createElement("hr");
+                          li.style.cssText = "font-size:120%; list-style-type: none";
+                          li.appendChild(document.createTextNode(value));
+                          ul.appendChild(li);
+                          ul.appendChild(line2);
+                      
+                      });
+                    }
+                }
+              
+          });
+          }
+          });
+          
+      });
+  </script>
+{% endblock %}
+
+
+{% block content %}
+<div id="erro"> </div>
+{% for tipo in tipos %}
+<label class="deactive" style="padding-top:30px">
+    <h4 style="padding-right:30px;"><input id="tipoUS" type="radio" value="{{tipo}}" name="options" onChange="unidade_us(this);" > {{tipo}}</h4>
+  </label>
+
+{% empty %}
+There are no entries for this topic yet.
+{% endfor %}
+
+</br>
+</br>
+
+<div class="col-md-3">
+  <h4>Distritos:</h4>
+  <div class="dropdown">
+    <select id="selectdistritos" style="width: 200px;" value="-Todos os distritos-" name="dist" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Todos os distritos-
+        <ul style="width: 200px;" class="dropdown-menu" value="-Todos os distritos-">
+          <option><li>-Seleccione distrito-</li><option>
+          {% for distrito in distritos %}
+          <option><li>{{distrito}}</li></option>
+          {% empty %}
+          {% endfor %}
+        </ul>
+      </select>
+  </div>
+</div>
+
+<div class="col-md-3">
+  <h4>Concelho:</h4>
+  <div class="dropdown">
+    <select id="select_concelhos" style="width: 200px;" value="-Todos os concelhos-" name="conc" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">-Todos os concelhos-
+    
+    <ul style="width: 200px;" class="dropdown-menu" value="-Todos os concelhos-">
+      <option><li>-Seleccione concelho-</li><option>
+      {% for concelho in conc %}
+      <option><li>{{concelho}}</li><option>
+      {% empty %}
+      {% endfor %}
+    </ul>
+    </select>
+  </div>
+</div>
+
+<div class="col-md-3">
+  <h4>Freguesias:</h4>
+  <div class="dropdown">
+     <select id="select_freguesias" style="width: 200px;" value="-Todas as freguesias-" name="freg" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">-Todas as freguesias-
+    
+    <ul style="width: 200px;" class="dropdown-menu" value="-Todas as freguesias-">
+      <option><li>-Seleccione freguesia-</li><option>
+      {% for freguesia in freg %}
+      <option><li>{{freguesia}}</li><option>
+      {% empty %}
+      {% endfor %}
+    </ul>
+    </select>
+  </div>
+</div>
+
+<div class="col-md-3"></div>
+
+
+
+</br>
+<div class="col-md-3" style="padding-top:10px">
+  <button id="pesquisar_un" name="submit" class="btn btn-lg btn-primary">Pesquisar</button> 
+</div>
+
+</br>
+<ul id="list_unidades" style="padding-top:100px">
+</ul>
+
+
+{% endblock content %}

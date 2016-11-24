@@ -1,0 +1,23 @@
+{% extends "learning_logs/base.html" %}
+{% load staticfiles %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'learning_logs/css/index.css' %}">
+{% endblock %}
+{% block header %}
+<div style="text-align: center">
+<h1><b>Opções</b></h1>
+</div>
+{% endblock header %}
+
+{% block content %}
+<div class="col-md-2">
+</div>
+<div class="col-md-8">
+<a href="{% url 'learning_logs:new_sint' %}" class="btn btn-primary btn-lg btn-block"><h3>Novo Pedido de Assistência</h3></a></br>
+<a href="{% url 'learning_logs:ped_anterior' %}" class="btn btn-primary btn-lg btn-block"><h3>Pedidos de Assistência Anteriores</h3></a></br>
+<a href="#" class="btn btn-primary btn-lg btn-block"><h3>Dados Pessoais</h3></a></br>
+<a href="#" class="btn btn-primary btn-lg btn-block"><h3>Ficha de Historial Clínico</h3></a></br></br>
+</div>
+<div class="col-md-2">
+</div>
+{% endblock content %}

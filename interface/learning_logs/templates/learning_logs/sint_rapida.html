@@ -1,0 +1,245 @@
+{% extends "learning_logs/base.html" %}
+{% load staticfiles %}
+
+{% block header %}
+<h1>Assistência Rápida</h1>
+{% endblock header %}
+
+{% block add_head_scripts %}
+<script>
+
+
+	function getCookie(name) {
+          var cookieValue = null;
+          if (document.cookie && document.cookie != '') {
+              var cookies = document.cookie.split(';');
+              for (var i = 0; i < cookies.length; i++) {
+                  var cookie = jQuery.trim(cookies[i]);
+                  // Does this cookie string begin with the name we want?
+                  if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+      }
+	  	
+	
+
+	$(document).ready(function(){
+
+		var today = new Date();
+		var dd = today.getDate();
+		var mm = today.getMonth()+1; //January is 0!
+		var yyyy = today.getFullYear();
+		if(dd<10){
+				dd='0'+dd
+			} 
+			if(mm<10){
+				mm='0'+mm
+			} 
+
+		today = yyyy+'-'+mm+'-'+dd;
+		document.getElementById("data_b").setAttribute("max", today);
+		
+    	var csrftoken = getCookie('csrftoken');
+        //Quem precisa de CSRF Token? 
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+		
+		var grupo_name = 0;
+		
+		$('h4.grupo').mouseover(function(){
+			$(this).css("background-color","#99CCFF");
+		});
+		$('h4.grupo').mouseout(function(){
+			if (grupo_name===0){
+				$(this).css("background-color","white");
+			}
+			else{
+				$(this).css("background-color","white");
+				var x = document.getElementById(grupo_name);
+				x.style.backgroundColor = "#99CCFF";
+
+			}
+			});
+		var values = ['x'];
+		$('h4.grupo').click(function () {
+			
+			if (grupo_name != 0){
+				var x = document.getElementById(grupo_name);
+				x.style.backgroundColor = "white";
+			}
+			
+            var optionSelected = $(this).attr('id');
+			grupo_name = optionSelected;
+            _data = {'grp' : grupo_name};
+            $.ajax({
+              crossDomain: false, // obviates need for sameOrigin test
+              beforeSend: function(xhr, settings) {
+                  if (!csrfSafeMethod(settings.type)) {
+                      //xhr.setRequestHeader('X-CSRF-Token', getCSRFTokenValue());
+                      xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                  }
+              },
+              type: 'POST',
+              url: '/get_opcao/',
+              data: _data,
+              success: function(resp)
+              {
+				$("#list_opcoes").empty()
+                var d = document.getElementById("list_opcoes");
+                $.each( resp, function( key, value ) {
+					var h = document.createElement("H4");  
+				  	h.appendChild(document.createTextNode(value));
+					h.setAttribute("class", 'sint');
+					h.setAttribute("id", value);
+					h.style.cssText = " text-align:center;";
+					d.appendChild(h);
+					h.onmouseover = function(){
+						h.style.backgroundColor='#99CCFF';
+					}
+					h.onmouseout = function(){
+						h.style.backgroundColor='white';
+					}
+					h.onclick = function(){
+						grupo_name=0;
+						$('h4.grupo').css("background-color", "white");
+						var optionSelected = $(this).attr('id');
+						$("#list_opcoes").empty()
+						
+						var d = document.getElementById("list_sintomas");
+						var h = document.createElement("H4");  
+						h.appendChild(document.createTextNode(optionSelected));
+						
+						h.setAttribute("id", value);
+						h.setAttribute("class", 'h_sint');
+						
+
+						if (values.includes(value)){
+							alert("ERRO: JÁ ADICIONOU ESTE SINTOMA");
+						}
+						else{
+							values.push(value);
+							d.appendChild(h);
+						}
+						h.style.cssText = " text-align:center;";
+						h.onmouseover = function(){
+							h.style.backgroundColor='#99CCFF';
+						}
+						h.onmouseout = function(){
+							h.style.backgroundColor='white';
+						}
+						h.onclick =  function(){
+							var optionSelected = $(this).attr('id');
+							var d = document.getElementById("list_sintomas");
+							$(this).remove();
+						}
+					}
+				
+                });
+				
+            }
+          });
+      });
+	  
+	  var gender=0;
+	  $('a#G').click(function(){
+		  gender=1;
+		  $('a#M').removeClass('btn-primary').addClass('btn-default');
+		   $('a#G').removeClass('btn-default').addClass('btn-primary');
+	  });
+	  $('a#M').click(function(){
+		  gender=1;	
+		  $('a#G').removeClass('btn-primary').addClass('btn-default');
+		   $('a#M').removeClass('btn-default').addClass('btn-primary');
+	  });
+
+	  $('a#submeter').click(function () {
+		  var d = document.getElementById("data_b").value;
+		  $("#erro").empty();
+		  if ((values.length == 1) || (gender==0) || (d.length==0)){
+			  var d = document.getElementById("erro");
+            	var h = document.createElement("H4");  
+                  var t = document.createTextNode("Por favor, insira todos os critérios de pesquisa.");
+                  h.appendChild(t);
+                  h.style.cssText = "color:red;";
+                  d.appendChild(h);  
+		  }
+		  else{
+			   $('a#submeter').attr("href", "{% url 'learning_logs:rec_rapida' %}");
+		  }
+	  });
+
+	});
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="erro"> </div>
+</br>
+<div class="col-md-6">
+    <label style="padding-right:1em"><h4>Data de nascimento:</h4> </label><input type="date" id="data_b" placeholder="Date of Birth">
+</div>
+
+<div class="col-md-3">
+<label for="gender" class="col-sm-4 col-md-4 control-label text-right"><h4>Sexo:</h4></label>
+<div class="btn-group">
+    <a href="#" class="btn btn-default" id="G" >F</a>
+    <a href="#" class="btn btn-default" id="M">M</a>
+  </div>
+</div>
+</br></br></br></br>
+
+<div class="col-md-2">
+</div>
+<div class="col-md-8" style="padding-top: 20px">
+            <table  class="table table-bordered table-condensed" >
+				<thead>
+					<tr>
+						<th style="width: 600px">
+							Seleccione sintomas
+						</th>
+						<th style="width: 300px">
+							Os seus sintomas
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>
+							<!--<img src="{% static 'learning_logs/imagens/body.png' %} " usemap="#body" class="bodymap"> 
+                            <map name="body">
+                                <area shape="circle" style="color: blue" coords="126, 46, 45" href="http://www.stumbleupon.com/" title="StumbleUpon" alt="StumbleUpon" />
+    
+                            </map>-->
+							<div class="col-md-6" >
+								{% for each in gruposintomass %}
+								<h4 class="grupo" id="{{each}}" style="text-align:center;">{{each}}</h4>
+								{% empty %}
+								nada
+								{% endfor %}
+							</div>
+							<div id="list_opcoes" class="col-md-6">
+							</div>
+						</td>
+						<td>
+							<div id="list_sintomas">
+							</div>
+						</td>
+					</tr>				
+				</tbody>
+			</table>
+			<div class="col-md-3" style="padding-left:620px">
+				<a id="submeter" name="submit" class="btn btn-lg btn-primary">Submeter</a> 
+			</div>
+
+</div>
+
+<div class="col-md-2">
+</div>
+
+{% endblock content %}

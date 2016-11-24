@@ -1,0 +1,23 @@
+{% extends "learning_logs/base.html" %}
+{% load bootstrap3 %}
+{% block header %}
+<h2>Aceda à sua conta</h2>
+{% endblock header %}
+
+{% block content %}
+  {% if form.errors %}
+  <p>A seu username e password não são os correctos. Tente de novo.</p>
+  {% endif %}
+<form method="post" action="{% url 'users:login' %}" class="form">
+{% csrf_token %}
+{% bootstrap_form form %}
+<a href="#">Recuperar username e/ou password.</a>
+</br>
+</br>
+{% buttons %}
+<button name="submit" class="btn btn-primary btn-lg">Entrar</button>
+{% endbuttons %}
+  <input type="hidden" name="next" value="{% url 'learning_logs:menu' %}" />
+</form>
+
+{% endblock content %}

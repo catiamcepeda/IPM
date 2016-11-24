@@ -1,0 +1,77 @@
+{% extends "learning_logs/base.html" %}
+{% load staticfiles %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'learning_logs/css/index.css' %}">
+{% endblock %}
+{% block header %}
+<h1>Pedidos de Assistência Anteriores</h1>
+{% endblock header %}
+
+{% block add_head_scripts %}
+<script>
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="col-md-2">
+</div>
+<div class="col-md-8" style="padding-top: 50px">
+<table class="table table-hover" >
+				<thead>
+					<tr>
+						<th>
+							#
+						</th>
+						<th style="width: 300px">
+							Sintomas
+						</th>
+                        <th style="width: 200px">
+							Data
+						</th>
+                        <th>
+							
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+                        <td style="vertical-align:middle;">
+							1
+						</td>
+						<td style="vertical-align:middle;">
+							<p>Falta de ar</p>
+                            <p>Tonturas</p>
+                            <p>Palpitações</p>
+							<p>Glicose < 60 mg/dl</p>
+						</td>
+						<td style="vertical-align:middle;">
+							15/10/2016
+						</td>
+                        <td style="vertical-align:middle;">
+							<a href="{% url 'learning_logs:edit_sint' %}"><img src="{% static 'learning_logs/imagens/edit.png' %}" height="40" weight='40'></a>
+                            <a href="#"><img src="{% static 'learning_logs/imagens/trash.png' %}" height="40" weight='40' style="padding-left: 20px;"></a>
+						</td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align:middle;">
+							2
+						</td>
+						<td style="vertical-align:middle;">
+							<p>Vómitos</p>
+                            <p>Diarreia</p>
+                            <p>Dor de cabeça</p>
+						</td>
+						<td style="vertical-align:middle;">
+							09/08/2014
+						</td>
+                        <td style="vertical-align:middle;">
+							<a href="#"><img src="{% static 'learning_logs/imagens/edit.png' %}" height="40" weight='40'> </a>
+                            <a href="#"><img src="{% static 'learning_logs/imagens/trash.png' %}" height="40" weight='40' style="padding-left: 20px;"></a>
+						</td>
+					</tr>				
+				</tbody>
+			</table>
+</div>
+<div class="col-md-2">
+</div>
+{% endblock %}

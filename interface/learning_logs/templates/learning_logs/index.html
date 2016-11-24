@@ -1,0 +1,65 @@
+{% extends "learning_logs/base.html" %}
+{% load staticfiles %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'learning_logs/css/index.css' %}">
+{% endblock %}
+{% block header %}
+    <div class='jumbotron'>
+        <h1><img src="{% static 'learning_logs/imagens/wam.png' %}" height="100" weight='100'>  Web Assistência Médica </h1>
+    </div>
+{% endblock header %}
+
+{% block content %}
+
+<div class="col-md-5">
+        <h2><b>
+		Assistência Rápida</b>
+	    </h2>
+        <div class='alert_cont'>
+            <p>
+            <img class='img_alert' src="{% static 'learning_logs/imagens/alert.png' %}"> 
+            </p>
+        </div>
+        <h4 class='h_alert'>Toda a informação submetida NÃO será guardada! </h4>
+        </br>
+        <a href="{% url 'learning_logs:sint_rapida' %}" class="btn btn-primary btn-lg btn-block">
+			Iniciar Assistência
+		</a>
+		
+	</div>
+
+    <div class="col-md-2" style="padding-top:40px;">
+		<img class='img_doctor' src="{% static 'learning_logs/imagens/doctor.jpg' %}">
+		</div>
+    </div>
+	<div class="col-md-5">
+    <h2><b>
+		Assistência Personalizada
+        </b>
+	</h2>
+	<p>
+		<div class='alert_cont'>
+            <p>
+            <img class='img_alert' src="{% static 'learning_logs/imagens/personalizada.png' %}"> 
+            </p>
+        </div>
+		<h4 class='h_alert'>Esta opção permite funcionalidades extra! </h4>
+        </br>
+				<a href="{% url 'users:login' %}" class="btn btn-primary btn-lg btn-block">
+					Entrar com login
+				</a>
+				</br>
+                    <a href="{% url 'users:register' %}" class="btn btn-primary btn-lg btn-block">
+					Registar novo utilizador</a>
+			</form>
+				
+	
+	</p>
+	</div>
+	
+</div>
+
+
+
+
+{% endblock content %}

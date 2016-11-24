@@ -1,0 +1,232 @@
+{% extends "learning_logs/base.html" %}
+{% load staticfiles %}
+
+{% block header %}
+<h1>Assistência Personalizada</h1>
+{% endblock header %}
+
+{% block add_head_scripts %}
+<script>
+
+
+	function getCookie(name) {
+          var cookieValue = null;
+          if (document.cookie && document.cookie != '') {
+              var cookies = document.cookie.split(';');
+              for (var i = 0; i < cookies.length; i++) {
+                  var cookie = jQuery.trim(cookies[i]);
+                  // Does this cookie string begin with the name we want?
+                  if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+      }
+	  	
+	
+
+	$(document).ready(function(){
+
+    	var csrftoken = getCookie('csrftoken');
+        //Quem precisa de CSRF Token? 
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+		
+		var grupo_name = 0;
+		
+		$('h4.grupo').mouseover(function(){
+			$(this).css("background-color","#99CCFF");
+		});
+		$('h4.grupo').mouseout(function(){
+			if (grupo_name===0){
+				$(this).css("background-color","white");
+			}
+			else{
+				$(this).css("background-color","white");
+				var x = document.getElementById(grupo_name);
+				x.style.backgroundColor = "#99CCFF";
+
+			}
+			});
+        $('h4.h_sint').mouseover(function(){
+			$(this).css("background-color","#99CCFF");
+		});
+        $('h4.h_sint').mouseout(function(){
+			$(this).css("background-color","white");
+		});
+		$('h4.h_sint').css("text-align","center");
+        $('h4.h_sint').click(function(){
+		var optionSelected = $(this).attr('id');
+							for (var i=values.length-1; i>=0; i--) {
+								if (values[i] === optionSelected) {
+									values.splice(i, 1);
+								}
+							}
+			$(this).remove();
+		});
+
+		var values = ['x', 'Falta de ar', 'Tonturas', 'Palpitações', 'Glicose < 60 mg/dl'];
+		$('h4.grupo').click(function () {
+			
+			if (grupo_name != 0){
+				var x = document.getElementById(grupo_name);
+				x.style.backgroundColor = "white";
+			}
+			
+            var optionSelected = $(this).attr('id');
+			grupo_name = optionSelected;
+            _data = {'grp' : grupo_name};
+            $.ajax({
+              crossDomain: false, // obviates need for sameOrigin test
+              beforeSend: function(xhr, settings) {
+                  if (!csrfSafeMethod(settings.type)) {
+                      //xhr.setRequestHeader('X-CSRF-Token', getCSRFTokenValue());
+                      xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                  }
+              },
+              type: 'POST',
+              url: '/get_opcao/',
+              data: _data,
+              success: function(resp)
+              {
+				$("#list_opcoes").empty()
+                var d = document.getElementById("list_opcoes");
+                $.each( resp, function( key, value ) {
+					var h = document.createElement("H4");  
+				  	h.appendChild(document.createTextNode(value));
+					h.setAttribute("class", 'sint');
+					h.setAttribute("id", value);
+					h.style.cssText = " text-align:center;";
+					d.appendChild(h);
+					h.onmouseover = function(){
+						h.style.backgroundColor='#99CCFF';
+					}
+					h.onmouseout = function(){
+						h.style.backgroundColor='white';
+					}
+					h.onclick = function(){
+						grupo_name=0;
+						$('h4.grupo').css("background-color", "white");
+						var optionSelected = $(this).attr('id');
+						$("#list_opcoes").empty()
+						
+						var d = document.getElementById("list_sintomas");
+						var h = document.createElement("H4");  
+						h.appendChild(document.createTextNode(optionSelected));
+						
+						h.setAttribute("id", value);
+						h.setAttribute("class", 'h_sint');
+						
+						if (values.includes(value)){
+						}
+						else{
+							values.push(value);
+							d.appendChild(h);
+						}
+						h.style.cssText = " text-align:center;";
+						h.onmouseover = function(){
+							h.style.backgroundColor='#99CCFF';
+						}
+						h.onmouseout = function(){
+							h.style.backgroundColor='white';
+						}
+						h.onclick =  function(){
+							var optionSelected = $(this).attr('id');
+							for (var i=values.length-1; i>=0; i--) {
+								if (values[i] === optionSelected) {
+									values.splice(i, 1);
+								}
+							}
+							$(this).remove();
+						}
+					}
+				
+                });
+				
+			  }
+          });
+      });
+	  
+
+	  $('a#submeter').click(function () {
+		  $("#erro").empty();
+		  if (values.length == 1){
+			  var d = document.getElementById("erro");
+            	var h = document.createElement("H4");  
+                  var t = document.createTextNode("Não tem nenhum sintoma seleccionado.");
+                  h.appendChild(t);
+                  h.style.cssText = "color:red;";
+                  d.appendChild(h);  
+		  }
+		  else{
+			   $('a#submeter').attr("href", "{% url 'learning_logs:edit_rec' %}");
+		  }
+	  });
+
+	});
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="erro"> </div>
+</br>
+
+</br>
+
+<div class="col-md-2">
+</div>
+<div class="col-md-8" style="padding-top: 20px">
+            <table  class="table table-bordered table-condensed" >
+				<thead>
+					<tr>
+						<th style="width: 600px">
+							Seleccione sintomas
+						</th>
+						<th style="width: 300px">
+							Os seus sintomas
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>
+							<!--<img src="{% static 'learning_logs/imagens/body.png' %} " usemap="#body" class="bodymap"> 
+                            <map name="body">
+                                <area shape="circle" style="color: blue" coords="126, 46, 45" href="http://www.stumbleupon.com/" title="StumbleUpon" alt="StumbleUpon" />
+    
+                            </map>-->
+							<div class="col-md-6" >
+								{% for each in gruposintomass %}
+								<h4 class="grupo" id="{{each}}" style="text-align:center;">{{each}}</h4>
+								{% empty %}
+								nada
+								{% endfor %}
+							</div>
+							<div id="list_opcoes" class="col-md-6">
+							</div>
+						</td>
+						<td>
+							<div id="list_sintomas">
+                                <h4 id="Falta de ar" class="h_sint">Falta de ar</h4>
+                                <h4 class="h_sint" id="Tonturas">Tonturas</h4>
+                                <h4 class="h_sint" id="Palpitações">Palpitações</h4>
+                                <h4 class="h_sint" id="Glicose < 60 mg/dl">Glicose < 60 mg/dl</h4>
+							</div>
+						</td>
+					</tr>				
+				</tbody>
+			</table>
+			<div class="col-md-3" style="padding-left:620px">
+				<a id="submeter" name="submit" class="btn btn-lg btn-primary">Submeter</a> 
+			</div>
+
+</div>
+
+<div class="col-md-2">
+</div>
+
+{% endblock content %}
