@@ -96,7 +96,7 @@
 				$("#list_opcoes").empty()
                 var d = document.getElementById("list_opcoes");
                 $.each( resp, function( key, value ) {
-					var h = document.createElement("H4");  
+					var h = document.createElement("H4"); 
 				  	h.appendChild(document.createTextNode(value));
 					h.setAttribute("class", 'sint');
 					h.setAttribute("id", value);
@@ -112,11 +112,17 @@
 						grupo_name=0;
 						$('h4.grupo').css("background-color", "white");
 						var optionSelected = $(this).attr('id');
-						$("#list_opcoes").empty()
+						//$("#list_opcoes").empty()
 						
 						var d = document.getElementById("list_sintomas");
 						var h = document.createElement("H4");  
+						var x = document.createElement("IMG");
+   						x.setAttribute("src", "{% static 'learning_logs/imagens/X.png' %}");
+						x.setAttribute("width", "17px");
+    					x.setAttribute("height", "17px");
+						x.setAttribute("align", "right");
 						h.appendChild(document.createTextNode(optionSelected));
+						h.appendChild(x);
 						
 						h.setAttribute("id", value);
 						h.setAttribute("class", 'h_sint');
@@ -211,10 +217,10 @@
 						</td>
 						<td>
 							<div id="list_sintomas">
-                                <h4 id="Falta de ar" class="h_sint">Falta de ar</h4>
-                                <h4 class="h_sint" id="Tonturas">Tonturas</h4>
-                                <h4 class="h_sint" id="Palpitações">Palpitações</h4>
-                                <h4 class="h_sint" id="Glicose < 60 mg/dl">Glicose < 60 mg/dl</h4>
+                                <h4 id="Falta de ar" class="h_sint">Falta de ar <img src="{% static 'learning_logs/imagens/X.png' %}" height="17" weight='17' align="right"></h4>
+                                <h4 class="h_sint" id="Tonturas">Tonturas <img src="{% static 'learning_logs/imagens/X.png' %}" height="17" weight='17' align="right"></h4>
+                                <h4 class="h_sint" id="Palpitações">Palpitações <img src="{% static 'learning_logs/imagens/X.png' %}" height="17" weight='17' align="right"></h4>
+                                <h4 class="h_sint" id="Glicose < 60 mg/dl">Glicose < 60 mg/dl <img src="{% static 'learning_logs/imagens/X.png' %}" height="17" weight='17' align="right"></h4>
 							</div>
 						</td>
 					</tr>				

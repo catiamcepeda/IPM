@@ -109,12 +109,17 @@
 						grupo_name=0;
 						$('h4.grupo').css("background-color", "white");
 						var optionSelected = $(this).attr('id');
-						$("#list_opcoes").empty()
+						//$("#list_opcoes").empty()
 						
 						var d = document.getElementById("list_sintomas");
 						var h = document.createElement("H4");  
+						var x = document.createElement("IMG");
+   						x.setAttribute("src", "{% static 'learning_logs/imagens/X.png' %}");
+						x.setAttribute("width", "17px");
+    					x.setAttribute("height", "17px");
+						x.setAttribute("align", "right");
 						h.appendChild(document.createTextNode(optionSelected));
-						
+						h.appendChild(x);
 						h.setAttribute("id", value);
 						h.setAttribute("class", 'h_sint');
 						

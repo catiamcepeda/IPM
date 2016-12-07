@@ -137,11 +137,13 @@
                     var t = document.createTextNode("Resultado da pesquisa");
                     h.appendChild(t);
                     var line1 = document.createElement("hr");
+                    line1.style.cssText = "color:#000000;  background-color:#000000; height:2px";
                     ul.appendChild(h);
                     ul.appendChild(line1);
                     if ($.isEmptyObject(resp)){
                         var li = document.createElement("li");
                         var line2 = document.createElement("hr");
+                        line2.style.cssText = "color:#000000;  background-color:#000000; height:2px";
                         li.style.cssText = "font-size:120%; list-style-type: none";
                         li.appendChild(document.createTextNode("Não foram encontrados resultados."));
                         ul.appendChild(li);
@@ -153,6 +155,7 @@
                       $.each( resp, function( key, value ) {
                           var li = document.createElement("li");
                           var line2 = document.createElement("hr");
+                          line2.style.cssText = "color:#000000;  background-color:#000000; height:2px";
                           li.style.cssText = "font-size:120%; list-style-type: none";
                           li.appendChild(document.createTextNode(value));
                           ul.appendChild(li);
